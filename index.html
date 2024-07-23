@@ -4,25 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SwiftCart — The fastest e-commerce store in SA</title>
-    <script
-      defer
-      src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"
-    ></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+   
   </head>
 
   <body>
-    <header class="bg-slate-500 absolute top-0 max-w-screen-xl pl-2 pr-2 pt-1">
+    <header class="p-4 absolute top-0 bg-slate-300">
       <div class="header-span">
-        <img src="/online-shop.png" class="h-8" alt="Flowbite Logo" />
-        <h3>SwiftCart</h3>
+        <img src="/online-shop.png" class="h-8 pl-1 pr-1" alt="Flowbite Logo" />
+        <h3 class="pl-1 pr-1">SwiftCart</h3>
       </div>
       <ul class="header-span">
-        <li>
-          <h3>WishList</h3>
-        </li>
-        <li>
+        <li class="pl-1 pr-1"><h3>WishList</h3></li>
+        <li class="pl-1 pr-1">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -38,36 +34,115 @@
             />
           </svg>
         </li>
-        <li>
-          <h3>Login</h3>
-        </li>
+        <li class="pl-1 pr-1"><h3>Login</h3></li>
       </ul>
     </header>
-    <main class="fixed top-9">
-      <div role="toolbar" aria-label="Sort and filter options">
-        <select>
-          <option></option>
-        </select>
 
-        <select aria-label="Sort by">
+    <main class="mt-8"
+      x-data="{
+        category: 'All',
+        apiUrl: 'https://fakestoreapi.com/products',
+        products: [],
+        sortBy: 'price-asc',
+        loading: false, /* Added loading state */
+        updateUrl() {
+          const baseApiUrl = 'https://fakestoreapi.com/products';
+          this.apiUrl = this.category === 'All' ? baseApiUrl : `${baseApiUrl}/category/${this.category}`;
+          this.fetchData();
+        },
+        fetchData() {
+          this.loading = true; /* Show loading spinner */
+          fetch(this.apiUrl)
+            .then(response => response.json())
+            .then(data => {
+              this.products = data;
+              this.sortData();
+              this.loading = false; /* Hide loading spinner */
+            })
+            .catch(error => {
+              console.error('Error fetching data:', error);
+              this.loading = false; /* Hide loading spinner on error */
+            });
+        },
+        sortData() {
+          if (this.sortBy === 'price-asc') {
+            this.products.sort((a, b) => a.price - b.price);
+          } else if (this.sortBy === 'price-desc') {
+            this.products.sort((a, b) => b.price - a.price);
+          }
+        }
+      }"
+      x-init="fetchData()"
+      @new-category.window="updateUrl"
+    >
+      <div class="toolbar bg-slate-600 w-full" role="toolbar" aria-label="Sort and filter options">
+        <select x-model="category" @change="updateUrl; $dispatch('new-category')">
+          <option value="All">All Categories</option>
+          <option value="electronics">Electronics</option>
+          <option value="jewelery">Jewels</option>
+          <option value="men's%20clothing">Mens Clothing</option>
+          <option value="women's%20clothing">Womans Clothing</option>
+        </select>
+        <select x-model="sortBy" aria-label="Sort by" @change="sortData">
           <option value="price-asc">Price: Low to High</option>
           <option value="price-desc">Price: High to Low</option>
         </select>
       </div>
+      <div x-show="loading" class="spinner-container">
+        <div class="spinner"></div>
+      </div>
       <article
-        x-data="{products:[] }"
-        x-init="fetch('https://fakestoreapi.com/products')
-              .then(res=>res.json())
-              .then(data=>products = data)"
+        x-data="{
+          openModal: false,
+          productID: 0,
+          item: {},
+          fetchProduct() {
+            if (this.productID) {
+              fetch(`https://fakestoreapi.com/products/${this.productID}`)
+                .then(res => res.json())
+                .then(data => {
+                  this.item = data;
+                })
+                .catch(error => console.error('Error fetching product details:', error));
+            }
+          }
+        }"
+        @product-id-changed.window="fetchProduct"
       >
-        <template class="flex justify-center" x-for="product in products" :key="product.id">
-          <span x-text="product.title" class="w-10 h-15 bg-white flex" >
-            
-          </span>
-        </template>
+        <div class="lg:max-h-none max-w-xl mx-auto grid gap-4 grid-cols-4 lg:grid-cols-4 md:grid-cols-2 items-center lg:max-w-none my-4">
+          <template x-for="product in products" :key="product.id">
+            <span
+              @click="openModal=true; productID = product.id; $dispatch('product-id-changed')"
+              class="max-w-25 bg-white"
+            >
+              <p class="text-red-800 overflow-hidden" x-text="product.title"></p>
+              <p class="m-1 text-red-800" x-text="product.price"></p>
+              <p class="m-1 text-red-800" x-text="product.category"></p>
+              <p class="m-1 text-red-800 overflow-hidden" x-text="product.description"></p>
+              <div x-data="{ imgURL: product.image }">
+                <img :src="imgURL" height="50" width="20" />
+              </div>
+            </span>
+          </template>
+        </div>
+        <div>
+          <div
+            class="z-10 fixed bg-black h-full modal"
+            x-show="openModal"
+            @click.away="openModal = !openModal"
+          >
+            <h1 x-text="item.title" class="text-red-900"></h1>
+            <p x-text="item.price"></p>
+            <p x-text="item.description"></p>
+            <p x-text="item.category"></p>
+            <img :src="item.image" height="50" width="20" />
+          </div>
+        </div>
       </article>
     </main>
 
     <script type="module" src="/main.js"></script>
   </body>
 </html>
+
+
