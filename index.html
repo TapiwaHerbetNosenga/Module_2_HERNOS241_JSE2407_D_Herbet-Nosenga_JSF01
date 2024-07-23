@@ -10,9 +10,9 @@
 </head>
 <body>
   <header class="bg-slate-500 fixed top-0 pl-2 pr-2 pt-1 pb-1">
-    <div class="header-span">
-      <img src="/online-shop.png" class="h-8" alt="Flowbite Logo" />
-      <h3>SwiftCart</h3>
+    <div class="header-span ">
+      <img class="pl-1 pr-1 h-8" src="/online-shop.png"  alt="Flowbite Logo" />
+      <h3 class="pl-1 pr-1">SwiftCart</h3>
     </div>
     <ul class="header-span">
       <li class="pl-1 pr-1"><h3>WishList</h3></li>
@@ -115,7 +115,7 @@
       }"
       @product-id-changed.window="fetchProduct"
     >
-      <div class="lg:max-h-none max-w-xl mx-auto grid gap-4 grid-cols-4 lg:grid-cols-4 md:grid-cols-2 items-center lg:max-w-none my-4">
+      <div class="lg:max-h-none max-w-xl mx-auto grid gap-4 xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 items-center lg:max-w-none my-4">
         <template x-for="product in products" :key="product.id">
           <span
             @click="openModal=true; productID = product.id; $dispatch('product-id-changed')"
@@ -130,7 +130,7 @@
           </span>
         </template>
       </div>
-      <div class="z-10 fixed bg-gray-400 h-full modal rounded-lg" x-show="openModal" @click.away="openModal = !openModal">
+      <div class="z-10 fixed bg-gray-400 overflow-auto  modal rounded-lg" x-show="openModal" @click.away="openModal = !openModal">
         <button class="justify-self-end text-lg text-red-500 font-bold hover:text-red-600" @click="openModal = !openModal">x</button>
         <div><img :src="item.image" class="Img1" /></div>
         <h2 class="text-gray-600 line-clamp-2 pl-1 pr-1 font-bold text-lg ml-2 mr-2 text-center" x-text="item.title"></h2>
