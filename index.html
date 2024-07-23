@@ -7,18 +7,17 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-   
   </head>
 
   <body>
-    <header class="p-4 absolute top-0 bg-slate-300">
+    <header class="bg-slate-500 fixed top-0  pl-2 pr-2 pt-1 pb-1">
       <div class="header-span">
-        <img src="/online-shop.png" class="h-8 pl-1 pr-1" alt="Flowbite Logo" />
-        <h3 class="pl-1 pr-1">SwiftCart</h3>
+        <img src="/online-shop.png" class="h-8" alt="Flowbite Logo" />
+        <h3>SwiftCart</h3>
       </div>
       <ul class="header-span">
-        <li class="pl-1 pr-1"><h3>WishList</h3></li>
-        <li class="pl-1 pr-1">
+        <li  class="pl-1 pr-1"><h3>WishList</h3></li>
+        <li  class="pl-1 pr-1">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -34,34 +33,34 @@
             />
           </svg>
         </li>
-        <li class="pl-1 pr-1"><h3>Login</h3></li>
+        <li  class="pl-1 pr-1"><h3>Login</h3></li>
       </ul>
     </header>
 
-    <main class="mt-8"
+    <main class="mt-12 flex flex-col justify-start align-top"
       x-data="{
         category: 'All',
         apiUrl: 'https://fakestoreapi.com/products',
         products: [],
         sortBy: 'price-asc',
-        loading: false, /* Added loading state */
+        loading: false,
         updateUrl() {
           const baseApiUrl = 'https://fakestoreapi.com/products';
           this.apiUrl = this.category === 'All' ? baseApiUrl : `${baseApiUrl}/category/${this.category}`;
           this.fetchData();
         },
         fetchData() {
-          this.loading = true; /* Show loading spinner */
+          this.loading = true; 
           fetch(this.apiUrl)
             .then(response => response.json())
             .then(data => {
               this.products = data;
               this.sortData();
-              this.loading = false; /* Hide loading spinner */
+              this.loading = false; 
             })
             .catch(error => {
               console.error('Error fetching data:', error);
-              this.loading = false; /* Hide loading spinner on error */
+              this.loading = false; 
             });
         },
         sortData() {
@@ -75,7 +74,7 @@
       x-init="fetchData()"
       @new-category.window="updateUrl"
     >
-      <div class="toolbar bg-slate-600 w-full" role="toolbar" aria-label="Sort and filter options">
+      <div class="" role="toolbar" aria-label="Sort and filter options">
         <select x-model="category" @change="updateUrl; $dispatch('new-category')">
           <option value="All">All Categories</option>
           <option value="electronics">Electronics</option>
@@ -113,15 +112,16 @@
           <template x-for="product in products" :key="product.id">
             <span
               @click="openModal=true; productID = product.id; $dispatch('product-id-changed')"
-              class="max-w-25 bg-white"
+              class="max-w-25 bg-white cards rounded-lg"
             >
-              <p class="text-red-800 overflow-hidden" x-text="product.title"></p>
-              <p class="m-1 text-red-800" x-text="product.price"></p>
-              <p class="m-1 text-red-800" x-text="product.category"></p>
-              <p class="m-1 text-red-800 overflow-hidden" x-text="product.description"></p>
-              <div x-data="{ imgURL: product.image }">
-                <img :src="imgURL" height="50" width="20" />
-              </div>
+            <div x-data="{ imgURL: product.image }">
+              <img :src="imgURL" class="Img" />
+            </div>
+              <h2 class="text-gray-600 line-clamp-2 pl-1 pr-1 font-bold text-lg ml-2 mr-2 text-center " x-text="product.title"></h2>
+              <p class="text-gray-500  pl-1 pr-1 font-bold text-lg ml-2 mr-2 " x-text="'R'+product.price"></p>
+              <p class="border-sky-500 border-2 rounded-md text-white bg-sky-500 font-semibold p-1 hover:bg-sky-600 hover:border-sky-600" x-text="product.category "></p>
+
+             
             </span>
           </template>
         </div>
@@ -131,11 +131,12 @@
             x-show="openModal"
             @click.away="openModal = !openModal"
           >
+          <img :src="item.image" class="Img" />
             <h1 x-text="item.title" class="text-red-900"></h1>
-            <p x-text="item.price"></p>
-            <p x-text="item.description"></p>
-            <p x-text="item.category"></p>
-            <img :src="item.image" height="50" width="20" />
+            <p x-text="'R'+item.price" class="text-red-900" ></p>
+            <p x-text="item.category" class="text-red-900"></p>
+            <p class="m-1 text-red-800 overflow-hidden" x-text="product.description"></p>
+           
           </div>
         </div>
       </article>
@@ -144,5 +145,3 @@
     <script type="module" src="/main.js"></script>
   </body>
 </html>
-
-

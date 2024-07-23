@@ -102,7 +102,32 @@ header {
   width: 100vw;
 }
 
-.toolbar{
-  position: sticky;
-  top: 4vw;
+.cards{
+ max-width: 30rem;
+  min-width: 15rem;
+  height: 20rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+ margin: 1rem;
+ 
+  
+}
+
+.Img{
+  width: max-content;
+  height: 10rem;
+  padding: 1rem;
+}
+
+article{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+main{
+  width: 100%;
 }
