@@ -4,20 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SwiftCart — The fastest e-commerce store in SA</title>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"
+    ></script>
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
   </head>
 
   <body>
-    <header class="bg-slate-500 fixed top-0  pl-2 pr-2 pt-1 pb-1">
+    <header class="bg-slate-500 fixed top-0 pl-2 pr-2 pt-1 pb-1">
       <div class="header-span">
         <img src="/online-shop.png" class="h-8" alt="Flowbite Logo" />
         <h3>SwiftCart</h3>
       </div>
       <ul class="header-span">
-        <li  class="pl-1 pr-1"><h3>WishList</h3></li>
-        <li  class="pl-1 pr-1">
+        <li class="pl-1 pr-1"><h3>WishList</h3></li>
+        <li class="pl-1 pr-1">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -33,11 +36,12 @@
             />
           </svg>
         </li>
-        <li  class="pl-1 pr-1"><h3>Login</h3></li>
+        <li class="pl-1 pr-1"><h3>Login</h3></li>
       </ul>
     </header>
 
-    <main class="mt-12 flex flex-col justify-start align-top"
+    <main
+      class="mt-12 flex flex-col justify-start align-top"
       x-data="{
         category: 'All',
         apiUrl: 'https://fakestoreapi.com/products',
@@ -75,7 +79,10 @@
       @new-category.window="updateUrl"
     >
       <div class="" role="toolbar" aria-label="Sort and filter options">
-        <select x-model="category" @change="updateUrl; $dispatch('new-category')">
+        <select
+          x-model="category"
+          @change="updateUrl; $dispatch('new-category')"
+        >
           <option value="All">All Categories</option>
           <option value="electronics">Electronics</option>
           <option value="jewelery">Jewels</option>
@@ -95,12 +102,15 @@
           openModal: false,
           productID: 0,
           item: {},
+          loadingS: false,
           fetchProduct() {
+            this.loadingS = true; 
             if (this.productID) {
               fetch(`https://fakestoreapi.com/products/${this.productID}`)
                 .then(res => res.json())
                 .then(data => {
                   this.item = data;
+                  this.loadingS = false; 
                 })
                 .catch(error => console.error('Error fetching product details:', error));
             }
@@ -108,35 +118,60 @@
         }"
         @product-id-changed.window="fetchProduct"
       >
-        <div class="lg:max-h-none max-w-xl mx-auto grid gap-4 grid-cols-4 lg:grid-cols-4 md:grid-cols-2 items-center lg:max-w-none my-4">
+        <div
+          class="lg:max-h-none max-w-xl mx-auto grid gap-4 grid-cols-4 lg:grid-cols-4 md:grid-cols-2 items-center lg:max-w-none my-4"
+        >
           <template x-for="product in products" :key="product.id">
             <span
               @click="openModal=true; productID = product.id; $dispatch('product-id-changed')"
               class="max-w-25 bg-white cards rounded-lg"
             >
-            <div x-data="{ imgURL: product.image }">
-              <img :src="imgURL" class="Img" />
-            </div>
-              <h2 class="text-gray-600 line-clamp-2 pl-1 pr-1 font-bold text-lg ml-2 mr-2 text-center " x-text="product.title"></h2>
-              <p class="text-gray-500  pl-1 pr-1 font-bold text-lg ml-2 mr-2 " x-text="'R'+product.price"></p>
-              <p class="border-sky-500 border-2 rounded-md text-white bg-sky-500 font-semibold p-1 hover:bg-sky-600 hover:border-sky-600" x-text="product.category "></p>
-
-             
+              <div x-data="{ imgURL: product.image }">
+                <img :src="imgURL" class="Img" />
+              </div>
+              <h2
+                class="text-gray-600 line-clamp-2 pl-1 pr-1 font-bold text-lg ml-2 mr-2 text-center"
+                x-text="product.title"
+              ></h2>
+              <p
+                class="text-gray-500 pl-1 pr-1 font-bold text-lg ml-2 mr-2"
+                x-text="'R'+product.price"
+              ></p>
+              <p
+                class="border-sky-500 border-2 rounded-md text-white bg-sky-500 font-semibold p-1 hover:bg-sky-600 hover:border-sky-600"
+                x-text="product.category "
+              ></p>
             </span>
           </template>
         </div>
         <div>
           <div
-            class="z-10 fixed bg-black h-full modal"
+            class="z-10 fixed bg-gray-400 h-full modal rounded-lg "
             x-show="openModal"
             @click.away="openModal = !openModal"
           >
-          <img :src="item.image" class="Img" />
-            <h1 x-text="item.title" class="text-red-900"></h1>
-            <p x-text="'R'+item.price" class="text-red-900" ></p>
-            <p x-text="item.category" class="text-red-900"></p>
-            <p class="m-1 text-red-800 overflow-hidden" x-text="product.description"></p>
-           
+          
+            <button class="justify-self-end text-lg text-red-500 font-bold justify-self-end hover:text-red-600" @click="openModal = !openModal">x</button>
+            <div><img :src="item.image" class="Img1" /></div>
+            <h2
+              class="text-gray-600 line-clamp-2 pl-1 pr-1 font-bold text-lg ml-2 mr-2 text-center"
+              x-text="item.title"
+            ></h2>
+            <p
+              class="text-gray-500 pl-1 pr-1 font-bold text-lg ml-2 mr-2"
+              x-text="'R'+item.price"
+            ></p>
+            <p
+              class="border-sky-500 border-2 rounded-md text-white bg-sky-500 font-semibold p-1 hover:bg-sky-600 hover:border-sky-600 max-w-fit"
+              x-text="item.category "
+            ></p>
+            <p
+              class=" text-gray-600 font-semibold m-4"
+              x-text="item.description"
+            ></p>
+            <div x-show="loadingS" class="spinnerS-container">
+              <div class="spinnerS"></div>
+            </div>
           </div>
         </div>
       </article>
